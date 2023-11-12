@@ -1,4 +1,4 @@
 package christmas.domain;
 
-public class OrderMap {
+public class TotalOrder {
 }
