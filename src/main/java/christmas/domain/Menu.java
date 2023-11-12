@@ -23,4 +23,16 @@ public enum Menu {
         this.price = price;
         this.menuType = menuType;
     }
+
+    public int getPrice() { return this.price; }
+
+    public int getDiscountedPrice(VisitDay day) {
+        if (day.isWorkingDay() && this.menuType == MenuType.DESERT) {
+            return this.price - 2023;
+        }
+        if (!day.isWorkingDay() && this.menuType == MenuType.MAIN) {
+            return this.price - 2023;
+        }
+        return this.price;
+    }
 }
