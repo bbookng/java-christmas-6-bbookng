@@ -3,7 +3,7 @@ package christmas.domain;
 import java.util.List;
 
 public class OrderList {
-    List<Order> orderList;
+    private final List<Order> orderList;
 
     public OrderList(List<Order> orderList) {
         this.orderList = orderList;
