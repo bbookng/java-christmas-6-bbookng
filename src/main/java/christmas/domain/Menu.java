@@ -1,5 +1,7 @@
 package christmas.domain;
 
+import java.util.Arrays;
+
 public enum Menu {
     MUSHROOM_SOUP("양송이수프", 6000, MenuType.APPETIZER),
     TAPAS("타파스", 5500, MenuType.APPETIZER),
@@ -24,7 +26,12 @@ public enum Menu {
         this.menuType = menuType;
     }
 
-    public int getPrice() { return this.price; }
+    public int getPrice() {
+        return this.price;
+    }
+    public String getMenuName() {
+        return this.menuName;
+    }
 
     public int getDiscountedPrice(VisitDay day) {
         if (day.isWorkingDay() && this.menuType == MenuType.DESERT) {
@@ -34,5 +41,12 @@ public enum Menu {
             return this.price - 2023;
         }
         return this.price;
+    }
+
+    public static Menu findMenuByMenuName(String menuName) {
+        return Arrays.stream(Menu.values())
+                .filter(menu -> menu.getMenuName().equalsIgnoreCase(menuName))
+                .findFirst()
+                .orElse(null);
     }
 }
