@@ -48,6 +48,7 @@ class VisitDayTest {
     @ValueSource(ints = {-4, 0, 32, 100})
     @ParameterizedTest
     void createInvalidVisitDay(int input) {
-        assertThatThrownBy(() -> new VisitDay(input)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(ErrorMessages.validateInRange);
+        assertThatThrownBy(() -> new VisitDay(input)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(ErrorMessages.validateVisitDay);
     }
 }
