@@ -27,7 +27,7 @@ public class VisitDay {
 
     private void validateInRange(int day) {
         if (day < 1 || day > 31) {
-            throw new IllegalArgumentException(ErrorMessages.validateInRange);
+            throw new IllegalArgumentException(ErrorMessages.validateVisitDay);
         }
     }
 }
