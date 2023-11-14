@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 class OrderListTest {
 
     public static OrderList orderList;
+    public static VisitDay visitDay;
 
     @BeforeAll
     static void setup() {
@@ -21,6 +22,7 @@ class OrderListTest {
         orders.add(new Order(Menu.ZERO_COKE, 1));
 
         orderList = new OrderList(orders);
+        visitDay = new VisitDay(3);
     }
 
     @DisplayName("OrderList 출력 테스트")
@@ -34,5 +36,18 @@ class OrderListTest {
 
         assertThat(orderList.toString())
                 .isEqualToNormalizingWhitespace(expected);
+    }
+
+    @DisplayName("총 주문 금액 테스트")
+    @Test
+    void getTotalOrderAmount() {
+        assertThat(orderList.getTotalOrderAmount())
+                .isEqualTo(142000);
+    }
+
+    @DisplayName("평일/주말할인 금액 테스트")
+    @Test
+    void getWorkingDayDiscountPrice() {
+        assertThat(orderList.getWorkingDayDiscountPrice(visitDay)).isEqualTo(4046);
     }
 }
