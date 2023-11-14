@@ -9,7 +9,9 @@ public class Order {
         this.count = count;
     }
 
-    public String getMenu() {
+    public Menu getMenu() { return this.menu; }
+
+    public String getMenuName() {
         return this.menu.getMenuName();
     }
 
