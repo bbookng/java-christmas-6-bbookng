@@ -11,6 +11,10 @@ public class VisitDay {
         this.day = day;
     }
 
+    public int getDay() {
+        return this.day;
+    }
+
     public boolean isWorkingDay() {
         if (this.day % 7 > 2 || this.day % 7 == 0) {
             return true;
@@ -23,6 +27,13 @@ public class VisitDay {
             if (starredDay == this.day) return true;
         }
         return false;
+    }
+
+    public int getChristmasDiscountPrice() {
+        if (day < 26) {
+            return 1000 + (100 * (day - 1));
+        }
+        return 0;
     }
 
     private void validateInRange(int day) {
