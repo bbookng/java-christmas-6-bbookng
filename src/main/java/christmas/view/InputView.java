@@ -5,6 +5,7 @@ import christmas.common.ErrorMessages;
 import christmas.common.Messages;
 import christmas.domain.OrderList;
 import christmas.domain.OrderListFactory;
+import christmas.domain.VisitDay;
 
 public class InputView {
     private final OrderListFactory orderListFactory;
@@ -13,21 +14,41 @@ public class InputView {
         this.orderListFactory = new OrderListFactory();
     }
 
-    public int inputVisitDay() {
+    public VisitDay inputVisitDay() {
         System.out.println(Messages.inputVisitDay);
-        String input = Console.readLine();
-        validateIsNumber(input);
-        return Integer.parseInt(input);
+        String input = null;
+        boolean isValidInput = false;
+
+        while (!isValidInput) {
+            try {
+                input = Console.readLine();
+                validateIsNumber(input);
+                isValidInput = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return new VisitDay(Integer.parseInt(input));
     }
 
     public OrderList inputOrderList() {
         System.out.println(Messages.inputOrderMenu);
-        String input = Console.readLine();
-        return orderListFactory.createOrderList(input);
+        OrderList orderList = null;
+        boolean isValidInput = false;
+        while (!isValidInput) {
+            try {
+                String input = Console.readLine();
+                orderList = orderListFactory.createOrderList(input);
+                isValidInput = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return orderList;
     }
 
     private void validateIsNumber(String input) {
-        if (!input.matches("[0-9]"))
+        if (!input.matches("^[0-9]+$"))
             throw new IllegalArgumentException(ErrorMessages.validateVisitDay);
     }
 }
