@@ -35,6 +35,7 @@ public class InputView {
         System.out.println(Messages.inputOrderMenu);
         OrderList orderList = null;
         boolean isValidInput = false;
+
         while (!isValidInput) {
             try {
                 String input = Console.readLine();
