@@ -1,5 +1,6 @@
 package christmas.domain;
 
+import christmas.common.Constant;
 import christmas.common.ErrorMessages;
 import java.util.Arrays;
 
@@ -49,5 +50,12 @@ public enum Menu {
                 .filter(menu -> menu.getMenuName().equalsIgnoreCase(menuName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.validateOrderMenu));
+    }
+
+    public boolean validateOrder() {
+        for (MenuType menuType : Constant.MENU_TYPES) {
+            if (menuType == this.menuType) return true;
+        }
+        return false;
     }
 }
