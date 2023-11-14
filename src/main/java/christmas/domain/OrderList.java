@@ -3,6 +3,7 @@ package christmas.domain;
 import java.util.List;
 
 public class OrderList {
+    private static final String LINE_SEPARATOR = System.lineSeparator();
     private final List<Order> orderList;
 
     public OrderList(List<Order> orderList) {
@@ -12,13 +13,13 @@ public class OrderList {
     @Override
     public String toString() {
         StringBuilder message = new StringBuilder();
-        message.append("<주문 메뉴>\n");
+        message.append("<주문 메뉴>" + LINE_SEPARATOR);
         orderList.forEach(order -> message.append(orderToString(order)));
         return message.toString();
     }
 
     private String orderToString(Order order) {
-        return String.format("%s %d개\n", order.getMenuName(), order.getCount());
+        return String.format("%s %d개", order.getMenuName(), order.getCount()) + LINE_SEPARATOR;
     }
 
     public int getTotalOrderAmount() {
