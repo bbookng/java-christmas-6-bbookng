@@ -66,4 +66,17 @@ class MenuTest {
         assertThat(Menu.findMenuByMenuName(menuName).getDiscountedPrice(weekend))
                 .isEqualTo(0);
     }
+
+    @DisplayName("음료 메뉴 시 false 반환 테스트")
+    @Test
+    void validateOrder() {
+        assertThat(Menu.CHAMPAIGN.validateOrder()).isFalse();
+    }
+
+    @DisplayName("음료가 아닌 메뉴 시 true 반환 테스트")
+    @ValueSource(strings = {"초코케이크", "아이스크림", "티본스테이크", "크리스마스파스타"})
+    @ParameterizedTest
+    void validateOrder(String input) {
+        assertThat(Menu.findMenuByMenuName(input).validateOrder()).isTrue();
+    }
 }
