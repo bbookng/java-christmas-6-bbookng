@@ -1,5 +1,6 @@
 package christmas.domain;
 
+import christmas.common.ErrorMessages;
 import java.util.Arrays;
 
 public enum Menu {
@@ -35,18 +36,18 @@ public enum Menu {
 
     public int getDiscountedPrice(VisitDay day) {
         if (day.isWorkingDay() && this.menuType == MenuType.DESERT) {
-            return this.price - 2023;
+            return 2023;
         }
         if (!day.isWorkingDay() && this.menuType == MenuType.MAIN) {
-            return this.price - 2023;
+            return 2023;
         }
-        return this.price;
+        return 0;
     }
 
     public static Menu findMenuByMenuName(String menuName) {
         return Arrays.stream(Menu.values())
                 .filter(menu -> menu.getMenuName().equalsIgnoreCase(menuName))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.validateOrderMenu));
     }
 }
