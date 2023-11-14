@@ -18,6 +18,26 @@ public class OrderList {
     }
 
     private String orderToString(Order order) {
-        return String.format("%s %d개\n", order.getMenu(), order.getCount());
+        return String.format("%s %d개\n", order.getMenuName(), order.getCount());
+    }
+
+    public int getTotalOrderAmount() {
+        return orderList.stream()
+                .map(order -> {
+                    Menu menu = Menu.findMenuByMenuName(order.getMenuName());
+                    return order.getCount() * menu.getPrice();
+                })
+                .mapToInt(Integer::intValue)
+                .sum();
+    }
+
+    public int getWorkingDayDiscountPrice(VisitDay visitDay) {
+        return orderList.stream()
+                .map(order -> {
+                    Menu menu = Menu.findMenuByMenuName(order.getMenuName());
+                    return order.getCount() * menu.getDiscountedPrice(visitDay);
+                })
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 }
