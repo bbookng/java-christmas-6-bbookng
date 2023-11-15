@@ -21,7 +21,7 @@ public class InputView {
 
         while (!isValidInput) {
             try {
-                input = Console.readLine();
+                input = Console.readLine().trim();
                 validateIsNumber(input);
                 isValidInput = true;
             } catch (IllegalArgumentException e) {
@@ -38,7 +38,7 @@ public class InputView {
 
         while (!isValidInput) {
             try {
-                String input = Console.readLine();
+                String input = Console.readLine().trim();
                 orderList = orderListFactory.createOrderList(input);
                 isValidInput = true;
             } catch (IllegalArgumentException e) {

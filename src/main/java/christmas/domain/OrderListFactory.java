@@ -30,7 +30,7 @@ public class OrderListFactory {
             throw new IllegalArgumentException(ErrorMessages.validateOrderMenu);
         }
 
-        String[] inputSplit = input.split("-");
+        String[] inputSplit = input.trim().split("-");
         Menu menu = validateMenu(inputSplit[0], orderList);
         int count = validateIsNumber(inputSplit[1]);
 
