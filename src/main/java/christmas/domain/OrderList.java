@@ -43,4 +43,8 @@ public class OrderList {
                 .mapToInt(Integer::intValue)
                 .sum();
     }
+
+    public static int totalMenuCounts(List<Order> orderList) {
+        return orderList.stream().mapToInt(order -> order.getCount()).sum();
+    }
 }
