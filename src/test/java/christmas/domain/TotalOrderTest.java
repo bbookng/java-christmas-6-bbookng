@@ -1,7 +1,6 @@
 package christmas.domain;
 
 import christmas.domain.enums.Menu;
-import christmas.view.OutputView;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
