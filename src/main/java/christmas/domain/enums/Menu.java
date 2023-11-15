@@ -1,7 +1,9 @@
-package christmas.domain;
+package christmas.domain.enums;
 
 import christmas.common.Constant;
 import christmas.common.ErrorMessages;
+import christmas.domain.VisitDay;
+
 import java.util.Arrays;
 
 public enum Menu {

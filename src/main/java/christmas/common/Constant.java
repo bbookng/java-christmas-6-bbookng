@@ -1,6 +1,6 @@
 package christmas.common;
 
-import christmas.domain.MenuType;
+import christmas.domain.enums.MenuType;
 
 public class Constant {
     public static int[] STARRED_DAY = new int[] {3, 10, 17, 24, 25, 31};

@@ -1,5 +1,7 @@
 package christmas.domain;
 
+import christmas.domain.enums.Badge;
+
 import java.text.DecimalFormat;
 
 public class TotalOrder {

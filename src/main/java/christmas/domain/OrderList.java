@@ -1,5 +1,7 @@
 package christmas.domain;
 
+import christmas.domain.enums.Menu;
+
 import java.util.List;
 
 public class OrderList {

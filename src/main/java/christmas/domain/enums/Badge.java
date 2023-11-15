@@ -1,7 +1,11 @@
-package christmas.domain;
+package christmas.domain.enums;
 
 public enum Badge {
-    STAR(5000, "별"), TREE(10000, "트리"), SANTA(20000, "산타"), NONE(0, "없음");
+    STAR(5000, "별"),
+    TREE(10000, "트리"),
+    SANTA(20000, "산타"),
+    NONE(0, "없음");
+
     private final int price;
     private final String badgeName;
 

@@ -1,5 +1,7 @@
 package christmas.domain;
 
+import christmas.domain.enums.Menu;
+
 public class Order {
     private final Menu menu;
     private final int count;
