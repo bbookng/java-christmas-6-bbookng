@@ -18,15 +18,130 @@ public class TotalOrder {
     @Override
     public String toString() {
         StringBuilder message = new StringBuilder();
-        message.append(totalOrderAmountToString() + LINE_SEPARATOR);
-        message.append(giftMenuToString() + LINE_SEPARATOR);
-        message.append(benefitsToString() + LINE_SEPARATOR);
-        message.append(totalBenefitAmountString() + LINE_SEPARATOR);
-        message.append(totalPayAmountToString() + LINE_SEPARATOR);
-        message.append(badgeToString());
+        appendTotalOrderAmount(message);
+        appendGiftMenu(message);
+        appendBenefits(message);
+        appendTotalBenefitAmount(message);
+        appendTotalPayAmount(message);
+        appendBadge(message);
         return message.toString();
     }
 
+    // 총 주문 금액을 문자열로 추가
+    private void appendTotalOrderAmount(StringBuilder message) {
+        message.append("<할인 전 총주문 금액>").append(LINE_SEPARATOR)
+                .append(String.format("%s원", formatter.format(orderList.getTotalOrderAmount())))
+                .append(LINE_SEPARATOR)
+                .append(LINE_SEPARATOR);
+    }
+
+    // 증정 메뉴 정보를 문자열로 추가
+    private void appendGiftMenu(StringBuilder message) {
+        message.append("<증정 메뉴>").append(LINE_SEPARATOR)
+                .append(String.format("%s", getGiftMenu()))
+                .append(LINE_SEPARATOR)
+                .append(LINE_SEPARATOR);
+    }
+
+    // 혜택 내역을 문자열로 추가
+    private void appendBenefits(StringBuilder message) {
+        message.append("<혜택 내역>").append(LINE_SEPARATOR);
+        appendDiscountDetail(message, "크리스마스 디데이 할인", christmasDiscount());
+        appendDiscountDetail(message, checkedWorkingDay() + " 할인", workingDayDiscount());
+        appendDiscountDetail(message, "특별 할인", specialDiscount());
+        appendGiftMenuDiscount(message);
+        if (message.length() == ("<혜택 내역>" + LINE_SEPARATOR).length()) {
+            message.append("없음").append(LINE_SEPARATOR);
+        }
+        message.append(LINE_SEPARATOR);
+    }
+
+    // 총 혜택 금액을 문자열로 추가
+    private void appendTotalBenefitAmount(StringBuilder message) {
+        message.append("<총혜택 금액>").append(LINE_SEPARATOR)
+                .append(String.format("%s원", formatter.format(-getTotalBenefitAmount())))
+                .append(LINE_SEPARATOR)
+                .append(LINE_SEPARATOR);
+    }
+
+    // 예상 결제 금액을 문자열로 추가
+    private void appendTotalPayAmount(StringBuilder message) {
+        message.append("<할인 후 예상 결제 금액>").append(LINE_SEPARATOR)
+                .append(String.format("%s원", formatter.format(totalPayAmount())))
+                .append(LINE_SEPARATOR)
+                .append(LINE_SEPARATOR);
+    }
+
+    // 이벤트 배지 정보를 문자열로 추가
+    private void appendBadge(StringBuilder message) {
+        message.append("<12월 이벤트 배지>").append(LINE_SEPARATOR)
+                .append(badge.getBadgeName())
+                .append(LINE_SEPARATOR);
+    }
+
+    // 크리스마스 디데이 할인 계산
+    private int christmasDiscount() {
+        if (orderList.getTotalOrderAmount() < 10000) {
+            return 0;
+        }
+        return visitDay.getChristmasDiscountPrice();
+    }
+
+    // 평일 또는 주말 여부 확인
+    private String checkedWorkingDay() {
+        if (visitDay.isWorkingDay()) {
+            return "평일";
+        }
+        return "주말";
+    }
+
+    // 평일 및 주말 할인 계산
+    private int workingDayDiscount() {
+        if (orderList.getTotalOrderAmount() < 10000) {
+            return 0;
+        }
+        return orderList.getWorkingDayDiscountPrice(visitDay);
+    }
+
+    // 특별 할인 계산
+    private int specialDiscount() {
+        if (orderList.getTotalOrderAmount() < 10000 || !visitDay.isStarredDay()) {
+            return 0;
+        }
+        return 1000;
+    }
+
+    // 할인 내역을 문자열로 추가
+    private void appendDiscountDetail(StringBuilder message, String discountName, int discountAmount) {
+        if (discountAmount != 0) {
+            message.append(String.format("%s : -%s원", discountName, formatter.format(discountAmount)))
+                    .append(LINE_SEPARATOR);
+        }
+    }
+
+    // 증정 메뉴 할인 정보를 문자열로 추가
+    private void appendGiftMenuDiscount(StringBuilder message) {
+        if (getGiftMenuPrice() != 0) {
+            message.append("증정 이벤트 : -25,000원").append(LINE_SEPARATOR);
+        }
+    }
+
+    // 총 할인 금액 계산
+    private int getTotalDiscountAmount() {
+        return christmasDiscount() + workingDayDiscount() + specialDiscount();
+    }
+
+    // 총 혜택 금액 계산
+    private int getTotalBenefitAmount() {
+        return getTotalDiscountAmount() + getGiftMenuPrice();
+    }
+
+    // 예상 결제 금액 계산
+    private int totalPayAmount() {
+        return orderList.getTotalOrderAmount() - getTotalDiscountAmount();
+    }
+
+    // 증정 메뉴 정보 반환
     private String getGiftMenu() {
         if (orderList.getTotalOrderAmount() >= 120000) {
             return "샴페인 1개";
@@ -34,118 +149,11 @@ public class TotalOrder {
         return "없음";
     }
 
+    // 증정 메뉴의 가격 반환
     private int getGiftMenuPrice() {
         if (orderList.getTotalOrderAmount() >= 120000) {
             return 25000;
         }
         return 0;
-    }
-
-    private String giftMenuToString() {
-        return "<증정 메뉴>" + LINE_SEPARATOR + String.format("%s", getGiftMenu()) + LINE_SEPARATOR;
-    }
-
-
-    private String totalOrderAmountToString() {
-        return "<할인 전 총주문 금액>" + LINE_SEPARATOR
-                + String.format("%s원", formatter.format(orderList.getTotalOrderAmount()))
-                + LINE_SEPARATOR;
-    }
-
-    private String benefitsToString() {
-        StringBuilder message = new StringBuilder();
-        christmasDiscountToString(message);
-        workingDayDiscountToString(message);
-        specialDiscountToString(message);
-        giftMenuToString(message);
-        if (message.length() == 0) message.append("없음" + LINE_SEPARATOR);
-        return "<혜택 내역>" + LINE_SEPARATOR + message.toString();
-    }
-
-    private void christmasDiscountToString(StringBuilder message) {
-        if (christmasDiscount() != 0) {
-            String discountMessage = String.format("크리스마드 디데이 할인 : -%s원",
-                    formatter.format(christmasDiscount())) + LINE_SEPARATOR;
-            message.append(discountMessage);
-        }
-    }
-
-    private int christmasDiscount() {
-        if (orderList.getTotalOrderAmount() < 10000) return 0;
-        return visitDay.getChristmasDiscountPrice();
-    }
-
-    private void workingDayDiscountToString(StringBuilder message) {
-        if (workingDayDiscount() != 0) {
-            String discountMessage = String.format("%s 할인 : -%s원",
-                    checkedWorkingDay(),
-                    formatter.format(workingDayDiscount())) + LINE_SEPARATOR;
-            message.append(discountMessage);
-        }
-    }
-
-    private String checkedWorkingDay() {
-        if (visitDay.isWorkingDay()) return "평일";
-        return "주말";
-    }
-
-    private int workingDayDiscount() {
-        if (orderList.getTotalOrderAmount() < 10000) return 0;
-        return orderList.getWorkingDayDiscountPrice(visitDay);
-    }
-
-    private void specialDiscountToString(StringBuilder message) {
-        if (specialDiscount() != 0) {
-            String discountMessage = String.format("특별 할인 : -%s원",
-                    formatter.format(specialDiscount())) + LINE_SEPARATOR;
-            message.append(discountMessage);
-        }
-    }
-
-    private int specialDiscount() {
-        if (orderList.getTotalOrderAmount() < 10000) return 0;
-        if (visitDay.isStarredDay()) return 1000;
-        return 0;
-    }
-
-    private void giftMenuToString(StringBuilder message) {
-        if (getGiftMenuPrice() != 0) {
-            String discountMessage = String.format("증정 이벤트 : -25,000원") + LINE_SEPARATOR;
-            message.append(discountMessage);
-        }
-    }
-
-    private int getTotalDiscountAmount() {
-        int discountAmount = 0;
-        discountAmount += christmasDiscount();
-        discountAmount += workingDayDiscount();
-        discountAmount += specialDiscount();
-        return discountAmount;
-    }
-
-    private int getTotalBenefitAmount() {
-        return getTotalDiscountAmount() + getGiftMenuPrice();
-    }
-
-    private String totalBenefitAmountString() {
-        return "<총혜택 금액>"
-                + LINE_SEPARATOR
-                + String.format("%s원", formatter.format(-getTotalBenefitAmount()))
-                + LINE_SEPARATOR;
-    }
-
-    private int totalPayAmount() {
-        return orderList.getTotalOrderAmount() - getTotalDiscountAmount();
-    }
-
-    private String totalPayAmountToString() {
-        return "<할인 후 예상 결제 금액>"
-                + LINE_SEPARATOR
-                + String.format("%s원", formatter.format(totalPayAmount()))
-                + LINE_SEPARATOR;
-    }
-
-    private String badgeToString() {
-        return "<12월 이벤트 배지>" + LINE_SEPARATOR + badge.getBadgeName();
     }
 }
