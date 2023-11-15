@@ -44,11 +44,29 @@ class VisitDayTest {
         assertThatCode(() -> new VisitDay(input)).doesNotThrowAnyException();
     }
 
+    @DisplayName("25일 이전일 경우 크리스마스 할인 이벤트 금액 테스트")
+    @ValueSource(ints = {1, 10, 20, 25})
+    @ParameterizedTest
+    void getChristmasDiscountPrice(int input) {
+        assertThat(new VisitDay(input).getChristmasDiscountPrice()).isEqualTo(someExpectedValue(input));
+    }
+
+    @DisplayName("25일 이후일 경우 크리스마스 할인 이벤트 금액 테스트")
+    @ValueSource(ints = {26, 30, 31})
+    @ParameterizedTest
+    void getOverChristmasDiscountPrice(int input) {
+        assertThat(new VisitDay(input).getChristmasDiscountPrice()).isEqualTo(0);
+    }
+
     @DisplayName("1에서 31사이의 날짜가 입력되지 않은 경우 생성자 테스트")
     @ValueSource(ints = {-4, 0, 32, 100})
     @ParameterizedTest
     void createInvalidVisitDay(int input) {
         assertThatThrownBy(() -> new VisitDay(input)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(ErrorMessages.validateVisitDay);
+    }
+
+    private int someExpectedValue(int input) {
+        return 1000 + (100 * (input - 1));
     }
 }
