@@ -17,7 +17,7 @@ class OrderListFactoryTest {
     public static VisitDay visitDay;
 
     @BeforeAll
-    static void setup() {
+    static void setUp() {
         List<Order> orders = new ArrayList<>();
         orders.add(new Order(Menu.TBONE_STEAK, 1));
         orders.add(new Order(Menu.BARBEQUE_RIB, 1));

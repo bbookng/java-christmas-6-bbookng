@@ -15,7 +15,7 @@ class MenuTest {
     public static VisitDay weekend;
 
     @BeforeAll
-    static void setup() {
+    static void setUp() {
         workingDay = new VisitDay(5);
         weekend = new VisitDay(1);
     }
