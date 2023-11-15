@@ -50,7 +50,7 @@ public class TotalOrder {
         appendDiscountDetail(message, checkedWorkingDay() + " 할인", workingDayDiscount());
         appendDiscountDetail(message, "특별 할인", specialDiscount());
         appendGiftMenuDiscount(message);
-        if (message.length() == ("<혜택 내역>" + LINE_SEPARATOR).length()) {
+        if (getTotalBenefitAmount() == 0) {
             message.append("없음").append(LINE_SEPARATOR);
         }
         message.append(LINE_SEPARATOR);
