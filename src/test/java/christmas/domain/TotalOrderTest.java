@@ -1,14 +1,17 @@
 package christmas.domain;
 
 import christmas.domain.enums.Menu;
+import christmas.view.OutputView;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 class TotalOrderTest {
     public static OrderList orderList;
@@ -28,30 +31,117 @@ class TotalOrderTest {
         totalOrder = new TotalOrder(orderList, visitDay);
     }
 
-    @DisplayName("TotalOrder의 toString() 메서드 테스트")
+    @DisplayName("크리스마스 디데이 할인 계산 테스트, 총 주문이 10000원 이하일 경우에는 이벤트 적용이 되지 않는다.")
     @Test
-    void testToString() {
-        String expectedOutput = "<할인 전 총주문 금액>\n" +
-                "142,000원\n" +
-                "\n" +
-                "<증정 메뉴>\n" +
-                "샴페인 1개\n" +
-                "\n" +
-                "<혜택 내역>\n" +
-                "크리스마스 디데이 할인 : -1,200원\n" +
-                "평일 할인 : -4,046원\n" +
-                "특별 할인 : -1,000원\n" +
-                "증정 이벤트 : -25,000원\n" +
-                "\n" +
-                "<총혜택 금액>\n" +
-                "-31,246원\n" +
-                "\n" +
-                "<할인 후 예상 결제 금액>\n" +
-                "135,754원\n" +
-                "\n" +
-                "<12월 이벤트 배지>\n" +
-                "산타";
+    void christmasDiscountWhenUnderMinimumAmount() {
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(new Order(Menu.MUSHROOM_SOUP, 1));
+        TotalOrder totalOrder = new TotalOrder(new OrderList(orderList), new VisitDay(3));
+        assertThat(totalOrder.christmasDiscount()).isEqualTo(0);
+    }
 
-        assertThat(totalOrder.toString()).isEqualTo(expectedOutput);
+    @DisplayName("크리스마스 디데이 할인 계산 테스트, 26일 이후에는 이벤트 적용이 되지 않는다.")
+    @Test
+    void christmasDiscountWhenOverChristmas() {
+        TotalOrder totalOrder = new TotalOrder(orderList, new VisitDay(26));
+        assertThat(totalOrder.christmasDiscount()).isEqualTo(0);
+    }
+
+    @DisplayName("크리스마스 디데이 할인 계산 테스트, 26일 이후에는 이벤트 적용이 되지 않는다.")
+    @Test
+    void christmasDiscountDuringChristmas() {
+        assertThat(totalOrder.christmasDiscount()).isEqualTo(1200);
+    }
+
+    @DisplayName("평일일 경우에는 평일을 반환한다.")
+    @Test
+    void checkedWorkingDayWhenWorkingDay() {
+        assertThat(totalOrder.checkedWorkingDay()).isEqualTo("평일");
+    }
+
+    @DisplayName("주말일 경우에는 주말을 반환한다.")
+    @Test
+    void checkedWorkingDayWhenWeekend() {
+        TotalOrder totalOrder = new TotalOrder(orderList, new VisitDay(2));
+        assertThat(totalOrder.checkedWorkingDay()).isEqualTo("주말");
+    }
+
+    @DisplayName("총 주문 금액이 10000원 이하이면 평일 및 주말할인 이벤트가 적용되지 않는다.")
+    @Test
+    void workingDayDiscountWhenUnderMinimumAmount() {
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(new Order(Menu.MUSHROOM_SOUP, 1));
+        TotalOrder totalOrder = new TotalOrder(new OrderList(orderList), new VisitDay(3));
+        assertThat(totalOrder.workingDayDiscount()).isEqualTo(0);
+    }
+
+    @DisplayName("평일에 디저트를 시키면 디저트 개수만큼 할인이 된다.")
+    @Test
+    void workingDayDiscountWhenWorkingDay() {
+        assertThat(totalOrder.workingDayDiscount()).isEqualTo(4046);
+    }
+
+    @DisplayName("주말에 메인메뉴를 시키면 메인메뉴 개수만큼 할인이 된다.")
+    @Test
+    void workingDayDiscountWhenWeekend() {
+        TotalOrder totalOrder = new TotalOrder(orderList, new VisitDay(2));
+        assertThat(totalOrder.workingDayDiscount()).isEqualTo(4046);
+    }
+
+    @DisplayName("총 주문 금액이 10000원 이하이면 특별할인 이벤트가 적용되지 않는다.")
+    @Test
+    void specialDiscountWhenUnderMinimumAmount() {
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(new Order(Menu.MUSHROOM_SOUP, 1));
+        TotalOrder totalOrder = new TotalOrder(new OrderList(orderList), new VisitDay(3));
+        assertThat(totalOrder.specialDiscount()).isEqualTo(0);
+    }
+
+    @DisplayName("별 표시된 날이 아니면 0을 반환한다.")
+    @ValueSource(ints = {5, 6, 7, 8, 11, 12, 13, 14})
+    @ParameterizedTest
+    void specialDiscountWhenNotStar(int input) {
+        TotalOrder totalOrder = new TotalOrder(orderList, new VisitDay(input));
+        assertThat(totalOrder.specialDiscount()).isEqualTo(0);
+    }
+
+    @DisplayName("별 표시된 날이면 1000을 반환한다.")
+    @ValueSource(ints = {3, 10, 17, 24, 25, 31})
+    @ParameterizedTest
+    void specialDiscountWhenStar(int input) {
+        TotalOrder totalOrder = new TotalOrder(orderList, new VisitDay(input));
+        assertThat(totalOrder.specialDiscount()).isEqualTo(1000);
+    }
+
+    @DisplayName("총 주문 금액이 120,000 이상이면 샴페인 1개를 증정한다.")
+    @Test
+    void getGiftMenuStringWhenOverStandard() {
+        assertThat(totalOrder.getGiftMenuString()).isEqualTo("샴페인 1개");
+    }
+
+    @DisplayName("총 주문 금액이 120,000 이하이면 없음을 반환한다.")
+    @Test
+    void getGiftMenuStringWhenUnderStandard() {
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(new Order(Menu.MUSHROOM_SOUP, 1));
+        orderList.add(new Order(Menu.CHRISTMAS_PASTA, 1));
+        TotalOrder totalOrder = new TotalOrder(new OrderList(orderList), new VisitDay(3));
+        assertThat(totalOrder.getGiftMenuString()).isEqualTo("없음");
+    }
+
+    @DisplayName("총 주문 금액이 120,000 이상이면 25,000을 반환한다.")
+    @Test
+    void getGiftMenuPriceOverStandard() {
+        assertThat(totalOrder.getGiftMenuPrice()).isEqualTo(25000);
+    }
+
+    @DisplayName("총 주문 금액이 120,000 이하이면 0을 반환한다.")
+    @Test
+    void getGiftMenuPriceUnderStandard() {
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(new Order(Menu.MUSHROOM_SOUP, 1));
+        orderList.add(new Order(Menu.CHRISTMAS_PASTA, 1));
+        TotalOrder totalOrder = new TotalOrder(new OrderList(orderList), new VisitDay(3));
+        assertThat(totalOrder.getGiftMenuPrice()).isEqualTo(0);
     }
 }
