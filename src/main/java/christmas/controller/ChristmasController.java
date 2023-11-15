@@ -17,6 +17,6 @@ public class ChristmasController {
 
         outputView.printOrderList(orderList);
         TotalOrder totalOrder = new TotalOrder(orderList, visitDay);
-        outputView.printResultMessage(totalOrder);
+        outputView.printTotalEventResult(totalOrder);
     }
 }
