@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class OrderListFactory {
-    private final OrderListValidator orderListValidator = new OrderListValidator()
-            ;
+    private final OrderListValidator orderListValidator = new OrderListValidator();
+
     public OrderList createOrderList(String input) {
         List<Order> orderList = new ArrayList<>();
 
