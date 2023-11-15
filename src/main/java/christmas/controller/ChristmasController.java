@@ -9,7 +9,7 @@ import christmas.view.OutputView;
 public class ChristmasController {
     private final InputView inputView = new InputView();
     private final OutputView outputView = new OutputView();
-    public void play() {
+    public void eventPlaying() {
         outputView.printGreetingMessage();
         VisitDay visitDay = inputView.inputVisitDay();
         OrderList orderList = inputView.inputOrderList();
